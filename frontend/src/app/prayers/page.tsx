@@ -29,8 +29,10 @@ function PrayerModal({
       .map(
         (v, i) => `
         <div class="verse">
-          <span class="verse-num">${i + 1}.</span>
-          <p class="verse-text">${v.text.replace(/\n/g, "<br>")}</p>
+          <div class="verse-header">
+            <span class="verse-num">${i + 1}.</span>
+            <p class="verse-text">${v.text.replace(/\n/g, "<br>")}</p>
+          </div>
           ${v.meaning ? `<p class="verse-meaning">${v.meaning}</p>` : ""}
         </div>`
       )
@@ -45,13 +47,14 @@ function PrayerModal({
         h1 { font-size: 20px; color: #c2410c; margin: 0 0 2px; }
         .sub { font-size: 12px; color: #666; margin: 0 0 16px; }
         hr { border: none; border-top: 1.5px solid #fed7aa; margin: 0 0 14px; }
-        .verse { display: grid; grid-template-columns: 22px 1fr; gap: 0 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #e5e7eb; }
+        .verse { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #e5e7eb; display: flex; flex-direction: column; gap: 0; }
         .verse:last-child { border-bottom: none; }
-        .verse-num { font-size: 10px; color: #f97316; font-weight: 700; padding-top: 3px; }
-        .verse-text { font-size: 14px; line-height: 1.85; margin: 0 0 4px; color: #1a1a1a; }
-        .verse-meaning { font-size: 11.5px; line-height: 1.6; color: #6b7280; font-style: italic; margin: 0; padding-top: 4px; border-top: 1px solid #f3f4f6; }
+        .verse-header { display: flex; gap: 8px; align-items: baseline; }
+        .verse-num { font-size: 10px; color: #f97316; font-weight: 700; flex-shrink: 0; min-width: 18px; }
+        .verse-text { font-size: 13.5px; line-height: 1.85; margin: 0; color: #1a1a1a; }
+        .verse-meaning { font-size: 11px; line-height: 1.65; color: #6b7280; font-style: italic; margin: 3px 0 0 26px; padding-top: 3px; border-top: 1px solid #f3f4f6; }
         .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #9ca3af; }
-        @media print { body { padding: 12px 16px; font-size: 12.5px; } .verse-text { font-size: 13px; } }
+        @media print { body { padding: 10px 14px; } .verse-text { font-size: 13px; } }
       </style>
       </head><body>
       <h1>${prayer.title}</h1>
