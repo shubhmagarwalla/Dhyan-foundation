@@ -1,0 +1,17 @@
+fastapi==0.133.0
+uvicorn==0.41.0
+sqlalchemy==2.0.46
+alembic==1.18.4
+psycopg2-binary==2.9.11
+python-dotenv==1.2.1
+pydantic-settings==2.13.1
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.5.0
+razorpay==2.0.0
+reportlab==4.4.10
+pillow==12.1.1
+aiofiles==25.1.0
+slowapi==0.1.9
+PyJHora==4.6.0
+httpx==0.28.1
+python-multipart==0.0.20

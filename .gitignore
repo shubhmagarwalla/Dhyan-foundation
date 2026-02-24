@@ -1,0 +1,23 @@
+# Environment files — NEVER commit secrets
+backend/.env
+frontend/.env.local
+*.env
+.env.*
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/certificates/
+backend/uploads/
+*.db
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Misc
+.DS_Store
+*.log
