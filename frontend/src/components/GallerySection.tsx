@@ -1,50 +1,79 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface GalleryItem {
+  src: string;
+  alt: string;
   caption: string;
-  gradient: string;
-  icon: string;
+  captionEn: string;
   description: string;
 }
 
 const galleryItems: GalleryItem[] = [
   {
-    caption: "Rescued Cows",
-    gradient: "linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FFB347 100%)",
-    icon: "🐄",
-    description: "Cows rescued from illegal transport trucks",
+    src: "/gallery/gaushala_1.webp",
+    alt: "Two calves resting peacefully at the gaushala",
+    caption: "नन्हे बछड़े",
+    captionEn: "Twin Calves",
+    description: "नन्हे बछड़े आराम करते हुए — हमारी गौशाला में जीवन की मधुर झलक।",
   },
   {
-    caption: "Nandi Care",
-    gradient: "linear-gradient(135deg, #2D6A4F 0%, #3a8f6a 50%, #52b788 100%)",
-    icon: "🐂",
-    description: "Dedicated Nandi (bull) care program",
+    src: "/gallery/gaushala_2.webp",
+    alt: "Majestic bull at the gaushala with large horns",
+    caption: "नंदी — पवित्र साँड़",
+    captionEn: "Nandi — Sacred Bull",
+    description: "पूजनीय नंदी की शान — सींगों के साथ जो आकाश को छूते हैं।",
   },
   {
-    caption: "Gaushala Facility",
-    gradient: "linear-gradient(135deg, #FF8C00 0%, #2D6A4F 100%)",
-    icon: "🏠",
-    description: "Our Goalpara gaushala facility in Assam",
+    src: "/gallery/gaushala_4.webp",
+    alt: "Calf resting near cows at gaushala",
+    caption: "विश्राम का पल",
+    captionEn: "Shelter & Rest",
+    description: "हमारी गौशाला में गायों और बछड़ों के लिए सुरक्षित आश्रय।",
   },
   {
-    caption: "Feeding Time",
-    gradient: "linear-gradient(135deg, #1a5c3a 0%, #2D6A4F 50%, #52b788 100%)",
-    icon: "🌾",
-    description: "Daily nutritious feeding sessions",
+    src: "/gallery/gaushala_5.webp",
+    alt: "Mother cow with nursing calf at the gaushala",
+    caption: "माँ और बच्चा",
+    captionEn: "Mother and Calf",
+    description: "माँ की ममता — गाय अपने बछड़े को प्यार से पालती है।",
   },
   {
-    caption: "Medical Care",
-    gradient: "linear-gradient(135deg, #FF6B00 0%, #e65c00 50%, #c94e00 100%)",
-    icon: "💊",
-    description: "Veterinary treatment and health monitoring",
+    src: "/gallery/gaushala_6.webp",
+    alt: "Young calf resting at the gaushala",
+    caption: "नन्हा मेहमान",
+    captionEn: "Young Calf",
+    description: "हमारे बचाए गए नन्हे बछड़ों में से एक।",
   },
   {
-    caption: "Happy Cows",
-    gradient: "linear-gradient(135deg, #40916c 0%, #2D6A4F 50%, #1b4332 100%)",
-    icon: "😊",
-    description: "Healthy, happy cows in our care",
+    src: "/gallery/gaushala_7.webp",
+    alt: "Herd of cows walking together at the gaushala",
+    caption: "एक साथ झुंड",
+    captionEn: "The Herd",
+    description: "हमारी गौशाला का झुंड — सभी स्वस्थ और सुरक्षित।",
+  },
+  {
+    src: "/gallery/gaushala_8.webp",
+    alt: "Cows and bulls with long horns at the gaushala",
+    caption: "बचाई गई गायें",
+    captionEn: "Rescued Cows",
+    description: "ये गायें हमारे बचाव अभियान में मिली थीं — अब पूरी तरह स्वस्थ।",
+  },
+  {
+    src: "/gallery/gaushala_9.webp",
+    alt: "Cows feeding on fresh green grass",
+    caption: "हरे चारे का समय",
+    captionEn: "Feeding Time",
+    description: "प्रतिदिन ताज़ा हरा चारा और पोषक आहार हमारी प्राथमिकता है।",
+  },
+  {
+    src: "/gallery/gaushala_10.webp",
+    alt: "Volunteers interacting with a cow at the gaushala",
+    caption: "सेवादार और गाय",
+    captionEn: "Volunteers & Cow",
+    description: "हमारे समर्पित स्वयंसेवक — जो हर दिन गौ सेवा में लगे रहते हैं।",
   },
 ];
 
@@ -80,7 +109,7 @@ export default function GallerySection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleryItems.map((item, index) => (
             <div
-              key={item.caption}
+              key={item.captionEn}
               className="group relative rounded-3xl overflow-hidden cursor-pointer shadow-md"
               style={{
                 transform:
@@ -94,42 +123,31 @@ export default function GallerySection() {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              {/* Gradient Placeholder Image */}
-              <div
-                className="w-full h-64 flex items-center justify-center relative"
-                style={{ background: item.gradient }}
-              >
-                {/* Large icon */}
-                <div
-                  className="text-7xl transition-transform duration-300"
-                  style={{
-                    transform: hoveredIndex === index ? "scale(1.2)" : "scale(1)",
-                    filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.2))",
-                  }}
-                >
-                  {item.icon}
-                </div>
+              {/* Real Photo */}
+              <div className="relative w-full h-64">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
 
-                {/* Shimmer overlay */}
+                {/* Gradient overlay always present (bottom fade) */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                  className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)",
-                    backgroundSize: "200% 200%",
+                      "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 55%)",
                   }}
                 />
 
                 {/* Description overlay on hover */}
                 <div
                   className="absolute inset-0 flex items-end p-4 transition-opacity duration-300"
-                  style={{
-                    background:
-                      "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%)",
-                    opacity: hoveredIndex === index ? 1 : 0,
-                  }}
+                  style={{ opacity: hoveredIndex === index ? 1 : 0 }}
                 >
-                  <p className="text-white text-sm font-medium">
+                  <p className="text-white text-sm font-medium leading-snug">
                     {item.description}
                   </p>
                 </div>
@@ -140,14 +158,18 @@ export default function GallerySection() {
                 className="px-5 py-4 flex items-center justify-between"
                 style={{ background: "white" }}
               >
-                <span className="font-semibold text-gray-700 text-sm">
-                  {item.caption}
-                </span>
+                <div>
+                  <p className="font-bold text-gray-800 text-sm leading-tight">
+                    {item.caption}
+                  </p>
+                  <p className="text-xs text-gray-400 leading-tight mt-0.5">
+                    {item.captionEn}
+                  </p>
+                </div>
                 <span
-                  className="text-xs font-medium px-3 py-1 rounded-full"
+                  className="text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap"
                   style={{
-                    background:
-                      index % 2 === 0 ? "#fff3e0" : "#e8f5ee",
+                    background: index % 2 === 0 ? "#fff3e0" : "#e8f5ee",
                     color: index % 2 === 0 ? "#FF6B00" : "#2D6A4F",
                   }}
                 >
