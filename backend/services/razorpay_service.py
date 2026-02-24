@@ -71,3 +71,17 @@ def verify_webhook_signature(body: bytes, signature: str) -> bool:
         hashlib.sha256,
     ).hexdigest()
     return hmac.compare_digest(expected, signature)
+
+
+def fetch_payment_details(payment_id: str) -> dict:
+    """
+    Fetch full payment details from Razorpay including fee breakdown.
+    Returns dict with: amount, fee, tax, method, bank, card details, etc.
+    fee and tax are in paise — divide by 100 for INR.
+    """
+    client = get_razorpay_client()
+    try:
+        return client.payment.fetch(payment_id)
+    except Exception as e:
+        print(f"[Razorpay] Failed to fetch payment {payment_id}: {e}")
+        return {}

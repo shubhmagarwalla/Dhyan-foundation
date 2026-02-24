@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from services.astrology_service import (
     get_kundali, get_kundali_matching, get_kaal_sarp_dosh,
     get_sade_sati, get_mangal_dosh,
+    _prokerala_get,
 )
 
 router = APIRouter(prefix="/astrology", tags=["astrology"])
@@ -53,3 +54,18 @@ async def sade_sati(req: BirthDetails):
 async def mangal_dosh(req: BirthDetails):
     result = await get_mangal_dosh(req.dob, req.tob, req.lat, req.lon, req.tz)
     return result
+
+
+@router.post("/panchang")
+async def panchang(req: BirthDetails):
+    params = {
+        "datetime": f"{req.dob}T{req.tob}:00+05:30",
+        "coordinates": f"{req.lat},{req.lon}",
+        "ayanamsa": "lahiri",
+        "la": "hi",  # Hindi language
+    }
+    result = await _prokerala_get("panchang/panchang", params)
+    if result:
+        result["source"] = "prokerala"
+        return result
+    return {"error": "Panchang temporarily unavailable", "source": "none"}

@@ -30,6 +30,9 @@ export default function Navbar() {
             <Link href="/#about" className="text-gray-700 hover:text-orange-600 transition-colors">About</Link>
             <Link href="/#gallery" className="text-gray-700 hover:text-orange-600 transition-colors">Gallery</Link>
             <Link href="/astrology" className="text-gray-700 hover:text-orange-600 transition-colors">🔮 Astrology</Link>
+            <Link href="/panchang" className="text-gray-700 hover:text-orange-600 transition-colors">📅 पंचांग</Link>
+            <Link href="/prayers" className="text-gray-700 hover:text-orange-600 transition-colors">🙏 आरती/चालीसा</Link>
+            <Link href="/culture" className="text-gray-700 hover:text-orange-600 transition-colors">🎨 संस्कृति</Link>
             <Link href="/#contact" className="text-gray-700 hover:text-orange-600 transition-colors">Contact</Link>
           </div>
 
@@ -98,6 +101,9 @@ export default function Navbar() {
           <Link href="/#about" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>About</Link>
           <Link href="/#gallery" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>Gallery</Link>
           <Link href="/astrology" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>🔮 Astrology</Link>
+          <Link href="/panchang" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>📅 पंचांग</Link>
+          <Link href="/prayers" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>🙏 आरती/चालीसा</Link>
+          <Link href="/culture" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>🎨 संस्कृति</Link>
           <Link href="/#contact" className="block text-sm font-medium py-1" onClick={() => setMenuOpen(false)}>Contact</Link>
           <Link
             href="/donate"

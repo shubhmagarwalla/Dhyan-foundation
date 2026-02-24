@@ -1,4 +1,5 @@
 import uuid
+import json
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
 from sqlalchemy.orm import Session
@@ -6,6 +7,7 @@ from pydantic import BaseModel, EmailStr
 from database import get_db
 from models.donation import Donation, DonationType, PaymentGateway, DonationStatus, DonationCause
 from models.certificate_template import CertificateTemplate
+from models.payment_transaction import PaymentTransaction, TransactionStatus, PaymentMethod
 from services import razorpay_service, cashfree_service
 from services.certificate_service import generate_80g_certificate
 from services.email_service import send_donation_confirmation
@@ -51,6 +53,62 @@ class VerifyPaymentRequest(BaseModel):
 
 def _get_active_template(db: Session) -> CertificateTemplate | None:
     return db.query(CertificateTemplate).filter(CertificateTemplate.is_active == True).first()
+
+
+def _record_transaction(
+    db: Session,
+    donation: Donation,
+    payment_id: str,
+    gateway: str,
+    raw: dict,
+) -> PaymentTransaction:
+    """
+    Create a PaymentTransaction record with full fee breakdown.
+    raw = full gateway payment object (from Razorpay payment.fetch or Cashfree).
+    """
+    # Razorpay: fee and tax are in paise
+    fee_paise = raw.get("fee", 0) or 0
+    tax_paise = raw.get("tax", 0) or 0
+    gross = donation.amount
+    gateway_fee = round(fee_paise / 100, 2)
+    gateway_tax = round(tax_paise / 100, 2)
+    total_deduction = round(gateway_fee + gateway_tax, 2)
+    net_receivable = round(gross - total_deduction, 2)
+
+    method_str = raw.get("method", "other")
+    try:
+        method = PaymentMethod(method_str)
+    except Exception:
+        method = PaymentMethod.OTHER
+
+    card = raw.get("card") or {}
+    txn = PaymentTransaction(
+        donation_id=donation.id,
+        user_id=donation.user_id,
+        gateway=gateway,
+        gateway_order_id=donation.gateway_order_id,
+        gateway_payment_id=payment_id,
+        subscription_id=donation.subscription_id,
+        gross_amount=gross,
+        gateway_fee=gateway_fee,
+        gateway_tax=gateway_tax,
+        gateway_total_deduction=total_deduction,
+        net_receivable=net_receivable,
+        currency=raw.get("currency", "INR"),
+        status=TransactionStatus.CAPTURED,
+        payment_method=method,
+        bank=raw.get("bank"),
+        card_network=card.get("network"),
+        card_last4=card.get("last4"),
+        upi_vpa=raw.get("vpa"),
+        wallet=raw.get("wallet"),
+        international=raw.get("international", False),
+        captured_at=datetime.utcnow(),
+        raw_response=json.dumps(raw)[:5000],  # cap at 5KB
+    )
+    db.add(txn)
+    db.commit()
+    return txn
 
 
 def _process_certificate(db: Session, donation: Donation):
@@ -219,13 +277,27 @@ async def verify_payment(
     donation.status = DonationStatus.SUCCESS
     db.commit()
 
+    # Fetch full payment details for fee breakdown
+    raw_payment = {}
+    if gateway == PaymentGateway.RAZORPAY and req.gateway_payment_id:
+        raw_payment = razorpay_service.fetch_payment_details(req.gateway_payment_id)
+    _record_transaction(db, donation, req.gateway_payment_id, req.gateway, raw_payment)
+
     # Generate certificate in background
     background_tasks.add_task(_process_certificate, db, donation)
+
+    txn = db.query(PaymentTransaction).filter(
+        PaymentTransaction.gateway_payment_id == req.gateway_payment_id
+    ).first()
 
     return {
         "message": "Payment verified",
         "donation_id": donation.id,
         "transaction_id": req.gateway_payment_id,
+        "gross_amount": donation.amount,
+        "gateway_fee": txn.gateway_fee if txn else None,
+        "gateway_tax": txn.gateway_tax if txn else None,
+        "net_receivable": txn.net_receivable if txn else None,
         "certificate": "will be emailed shortly",
     }
 
