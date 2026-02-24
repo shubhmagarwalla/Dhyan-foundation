@@ -22,7 +22,47 @@ function PrayerModal({
   prayer: Prayer;
   onClose: () => void;
 }) {
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const versesHtml = prayer.verses
+      .map(
+        (v, i) => `
+        <div class="verse">
+          <span class="verse-num">${i + 1}.</span>
+          <p class="verse-text">${v.text.replace(/\n/g, "<br>")}</p>
+          ${v.meaning ? `<p class="verse-meaning">${v.meaning}</p>` : ""}
+        </div>`
+      )
+      .join("");
+    printWindow.document.write(`
+      <!DOCTYPE html><html><head>
+      <meta charset="utf-8">
+      <title>${prayer.title}</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari&display=swap');
+        body { font-family: 'Noto Serif Devanagari', 'Noto Serif', Georgia, serif; max-width: 680px; margin: 0 auto; padding: 20px 24px; color: #1a1a1a; font-size: 13.5px; }
+        h1 { font-size: 20px; color: #c2410c; margin: 0 0 2px; }
+        .sub { font-size: 12px; color: #666; margin: 0 0 16px; }
+        hr { border: none; border-top: 1.5px solid #fed7aa; margin: 0 0 14px; }
+        .verse { display: grid; grid-template-columns: 22px 1fr; gap: 0 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #e5e7eb; }
+        .verse:last-child { border-bottom: none; }
+        .verse-num { font-size: 10px; color: #f97316; font-weight: 700; padding-top: 3px; }
+        .verse-text { font-size: 14px; line-height: 1.85; margin: 0 0 4px; color: #1a1a1a; }
+        .verse-meaning { font-size: 11.5px; line-height: 1.6; color: #6b7280; font-style: italic; margin: 0; padding-top: 4px; border-top: 1px solid #f3f4f6; }
+        .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #9ca3af; }
+        @media print { body { padding: 12px 16px; font-size: 12.5px; } .verse-text { font-size: 13px; } }
+      </style>
+      </head><body>
+      <h1>${prayer.title}</h1>
+      <p class="sub">${prayer.deity}${prayer.festival ? " · " + prayer.festival : ""} · ${prayer.language}</p>
+      <hr>
+      ${versesHtml}
+      <div class="footer">— Dhyan Foundation Guwahati | dhyanfoundationguwahati.org —</div>
+      </body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+  };
   const handleShare = async () => {
     try {
       await navigator.share({
