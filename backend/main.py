@@ -13,6 +13,10 @@ from routers import auth, donations, astrology, admin
 
 settings = get_settings()
 
+# Ensure upload/cert dirs exist at module load time (before StaticFiles mount)
+Path("certificates").mkdir(exist_ok=True)
+Path("uploads").mkdir(exist_ok=True)
+
 # Rate limiter
 limiter = Limiter(key_func=get_remote_address)
 
@@ -20,9 +24,6 @@ limiter = Limiter(key_func=get_remote_address)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
-    # Ensure upload/cert dirs exist
-    Path("certificates").mkdir(exist_ok=True)
-    Path("uploads").mkdir(exist_ok=True)
     yield
 
 
