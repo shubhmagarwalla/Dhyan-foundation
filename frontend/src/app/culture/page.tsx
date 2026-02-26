@@ -154,7 +154,7 @@ function VratKathaModal({ katha, onClose }: { katha: VratKatha; onClose: () => v
         (ch, i) => `
         <div class="chapter">
           <h3>${i + 1}. ${ch.titleHindi}</h3>
-          <p>${ch.content}</p>
+          <p>${ch.content.replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>")}</p>
         </div>`
       )
       .join("");
@@ -164,21 +164,26 @@ function VratKathaModal({ katha, onClose }: { katha: VratKatha; onClose: () => v
       <title>${katha.titleHindi}</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari&display=swap');
-        body { font-family: 'Noto Serif Devanagari', 'Noto Serif', serif; max-width: 700px; margin: 0 auto; padding: 24px; color: #222; font-size: 14px; line-height: 1.9; }
-        h1 { font-size: 22px; color: #7c3aed; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 4px; }
-        .meta { font-size: 12px; color: #666; margin-bottom: 20px; }
-        h3 { font-size: 15px; color: #6d28d9; margin-top: 20px; margin-bottom: 6px; }
-        .chapter { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #e5e7eb; }
+        body { font-family: 'Noto Serif Devanagari', 'Noto Serif', Georgia, serif; max-width: 680px; margin: 0 auto; padding: 20px 24px; color: #1a1a1a; font-size: 13.5px; line-height: 1.8; }
+        h1 { font-size: 20px; color: #6d28d9; margin: 0 0 2px; }
+        .meta { font-size: 11px; color: #666; margin: 0 0 10px; }
+        hr { border: none; border-top: 1.5px solid #ddd6fe; margin: 0 0 12px; }
+        .significance { font-size: 12px; color: #5b21b6; background: #f5f3ff; border-left: 3px solid #7c3aed; padding: 8px 12px; margin-bottom: 14px; line-height: 1.6; }
+        .chapter { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed #e5e7eb; }
         .chapter:last-child { border-bottom: none; }
-        p { margin: 0; text-align: justify; }
-        .significance { background: #f5f3ff; padding: 10px 14px; border-left: 3px solid #7c3aed; margin-bottom: 18px; font-size: 13px; }
+        h3 { font-size: 13px; color: #6d28d9; font-weight: 700; margin: 0 0 5px; }
+        p { margin: 0 0 6px; text-align: justify; }
+        p:last-child { margin-bottom: 0; }
+        .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #9ca3af; }
+        @media print { body { padding: 10px 14px; font-size: 12.5px; } h1 { font-size: 18px; } }
       </style>
       </head><body>
       <h1>${katha.titleHindi}</h1>
-      <div class="meta">${katha.icon} ${katha.occasionHindi} &nbsp;|&nbsp; स्रोत: ${katha.source}</div>
+      <div class="meta">${katha.icon} ${katha.occasionHindi} &nbsp;·&nbsp; स्रोत: ${katha.source}</div>
+      <hr>
       <div class="significance">${katha.significanceHindi}</div>
       ${chaptersHtml}
-      <p style="text-align:center;margin-top:24px;font-size:11px;color:#999;">— Dhyan Foundation Guwahati | dhyanfoundationguwahati.org —</p>
+      <div class="footer">— Dhyan Foundation Guwahati | dhyanfoundationguwahati.org —</div>
       </body></html>`);
     printWindow.document.close();
     printWindow.print();
